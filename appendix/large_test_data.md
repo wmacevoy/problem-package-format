@@ -215,6 +215,7 @@ Program    | Contract
 The `judge` contract is deliberately the interface the specification already defines and nothing more.
 The same `judge` therefore works unchanged in a conventional non-interactive package, can be run standalone during development, and does not need to know the wrapper exists.
 A companion tool that runs `gen` over every test case and writes real `.in` and `.ans` files keeps both forms reachable from one set of sources: the streaming form for the repository, the conventional form for uploading and archiving.
+A working implementation of the wrapper and both tools, with the two example problems below, is in [`ppf-stream/`](../ppf-stream/).
 
 A test case is written as a pipeline, so extra stages can be inserted after the generator:
 
