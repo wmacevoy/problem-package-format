@@ -1,0 +1,41 @@
+#!/usr/bin/env python3
+"""An ordinary output validator: judge input answer feedback < team_output.
+
+Recomputes the answer from the input by exact integer comparison, so no
+answer file is needed.  Works unchanged in a conventional package.
+"""
+import pathlib, sys
+sys.set_int_max_str_digits(0)
+AC, WA = 42, 43
+
+def num(t):
+    neg = t.startswith("-")
+    if neg or t.startswith("+"): t = t[1:]
+    v = int(t.replace(".", "", 1))
+    return -v if neg else v
+
+def main():
+    input_file, _answer_file, feedback_dir = sys.argv[1:4]
+    tok = pathlib.Path(input_file).read_bytes().split()
+    n = int(tok[0])
+    lat_lo, lat_hi, lon_lo, lon_hi = (num(t.decode()) for t in tok[2:6])
+    want, p = [], 6
+    for _ in range(n):
+        name, lat, lon = tok[p], num(tok[p+1].decode()), num(tok[p+2].decode())
+        p += 3
+        if lat_lo <= lat <= lat_hi and lon_lo <= lon <= lon_hi:
+            want.append(name)
+    expected = f"{len(want)}\n".encode() + b"".join(s + b"\n" for s in want)
+    got = sys.stdin.buffer.read()
+    if got == expected:
+        return AC
+    try:
+        gl = got.splitlines()
+        (pathlib.Path(feedback_dir) / "judgemessage.txt").write_text(
+            f"expected {len(want)} matching artifacts, got "
+            f"{gl[0].decode(errors='replace') if gl else '(no output)'}\n")
+    except OSError:
+        pass
+    return WA
+
+sys.exit(main())

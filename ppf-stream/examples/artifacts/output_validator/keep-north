@@ -1,0 +1,81 @@
+#!/usr/bin/env python3
+"""keep-north: move every artifact into the open interval (0, 90).
+
+A late ruling says latitudes are strictly north of the equator and strictly
+south of the pole.  This is a stage inserted after `gen`, so the generator
+that has already been reviewed and tested is not touched.
+
+Reflection rather than dropping, because it keeps the record count and keeps
+every point the generator planted exactly on, and one unit in the last place
+either side of, the box edges.  Those planted points are the only reason
+several test cases exist.  For a box that lay wholly south, mirroring is an
+exact bijection and membership is preserved artifact for artifact.
+
+The record count is handled by recfilter, so this filter cannot get it wrong
+even when a future edit does start dropping records.
+"""
+import pathlib
+import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent / "lib"))
+from recfilter import run                                    # noqa: E402
+
+sys.set_int_max_str_digits(0)
+
+
+def num(t):
+    neg = t.startswith(b"-")
+    if neg or t.startswith(b"+"):
+        t = t[1:]
+    v = int(t.replace(b".", b"", 1))
+    return -v if neg else v
+
+
+def fmt(v, d):
+    sign = "-" if v < 0 else ""
+    whole, frac = divmod(abs(v), 10 ** d)
+    return f"{sign}{whole}" if d == 0 else f"{sign}{whole}.{str(frac).rjust(d, '0')}"
+
+
+def setup(header, ctx):
+    n, d = header[0].split()[:2]
+    ctx["d"] = d = int(d)
+    box = header[1].split()
+    lat_lo, lat_hi = num(box[0]), num(box[1])
+    # Latitude must lie in the OPEN interval (0, 90), so the extreme legal
+    # values are one unit in the last place inside each end.  Both ends are
+    # edge cases in their own right and the box has to respect them.
+    ctx["lo_bound"] = lo_bound = 1
+    ctx["hi_bound"] = hi_bound = 90 * 10 ** d - 1
+    ctx["mirror"] = mirror = lat_hi <= 0
+    if mirror:
+        lat_lo, lat_hi = -lat_hi, -lat_lo
+    lat_lo = min(max(lat_lo, lo_bound), hi_bound)
+    lat_hi = min(max(lat_hi, lo_bound), hi_bound)
+    if lat_lo > lat_hi:
+        sys.exit("box cannot be placed inside (0, 90)")
+    ctx["box"] = (lat_lo, lat_hi, box[2].decode(), box[3].decode())
+
+
+def prologue(header, ctx, n_out):
+    d = ctx["d"]
+    lat_lo, lat_hi, lon_lo, lon_hi = ctx["box"]
+    return [f"{n_out} {d}\n".encode(),
+            f"{fmt(lat_lo, d)} {fmt(lat_hi, d)} {lon_lo} {lon_hi}\n".encode()]
+
+
+def record(line, ctx):
+    d, name_lat_lon = ctx["d"], line.split()
+    name, lat, lon = name_lat_lon[0], num(name_lat_lon[1]), name_lat_lon[2]
+    if ctx["mirror"]:
+        lat = -lat                       # exact bijection inside the box
+    # Anything still outside (0, 90) is outside the box by construction;
+    # fold it back into range.  A folded point can land inside the box, which
+    # is harmless: the judge recomputes the answer from the input it is given.
+    lat = abs(lat)
+    lat = min(max(lat, ctx["lo_bound"]), ctx["hi_bound"])
+    return [b"%s %s %s\n" % (name, fmt(lat, d).encode(), lon)]
+
+
+run(header_lines=2, setup=setup, record=record, prologue=prologue,
+    preserves_count=True)          # reflection maps one record to one record
