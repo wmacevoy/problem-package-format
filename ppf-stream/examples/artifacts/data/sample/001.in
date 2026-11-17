@@ -1,0 +1,1 @@
+--n 5 --digits 6 --case tiny | keep-north

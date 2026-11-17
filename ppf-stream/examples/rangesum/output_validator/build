@@ -1,0 +1,7 @@
+#!/bin/sh
+# Run once by the judge system before `run`. The specification allows
+# assuming a POSIX shell and a C++ compiler are available.
+set -e
+d="$(dirname "$0")"
+c++ -O2 -std=c++17 -o "$d/gen"   "$d/gen.cc"
+c++ -O2 -std=c++17 -o "$d/judge" "$d/judge.cc"

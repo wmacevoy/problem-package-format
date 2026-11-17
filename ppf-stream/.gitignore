@@ -1,0 +1,8 @@
+# Generated test data: the point of this pattern is that it is never committed.
+*.cache
+.*.part
+__pycache__/
+# Built by output_validator/build and by judges from the .cc sources.
+examples/rangesum/output_validator/gen
+examples/rangesum/output_validator/judge
+examples/rangesum/submissions/wrong_answer/overflow
