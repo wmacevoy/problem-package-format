@@ -76,6 +76,7 @@ import subprocess
 import sys
 import tempfile
 import threading
+import time
 
 AC, WA, JUDGE_ERROR = 42, 43, 1
 HERE = pathlib.Path(__file__).resolve().parent
@@ -261,6 +262,58 @@ def regen_tree(cache_dir, src=None, script_rel="regen.sh"):
     dest = cache / f"regen-{tree_digest(src)[:32]}"
     if (dest / ".complete").exists():
         return dest, True
+
+    # Generate in a DETACHED worker, behind a lock.  A judge may kill this
+    # validator (the submission's wall clock runs while it waits); if the
+    # generator died with it, a generator slower than the wall limit would be
+    # killed on every case and the cache would never fill.  Detached, the work
+    # survives, and every later call waits for the one run in progress.
+    lock = dest.with_name(dest.name + ".lock")
+    failed = dest.with_name(dest.name + ".failed")
+    for _ in range(2):
+        try:
+            fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            os.close(fd)
+            subprocess.Popen([sys.executable, str(pathlib.Path(__file__).resolve()), "--regen-worker",
+                              str(cache), str(src), script_rel, str(dest)],
+                             stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                             stderr=subprocess.DEVNULL, start_new_session=True)
+        except FileExistsError:
+            pass                                   # a run is already in progress
+        while True:
+            if (dest / ".complete").exists():
+                return dest, False
+            if failed.exists():
+                raise RuntimeError(failed.read_text()[-800:])
+            try:
+                age = time.time() - lock.stat().st_mtime
+            except FileNotFoundError:
+                break                              # worker ended without a result: retry
+            if age > STALE_LOCK_SECONDS:
+                lock.unlink(missing_ok=True)       # a worker that died with its machine
+                break
+            time.sleep(0.2)
+    raise RuntimeError("regeneration did not complete")
+
+
+STALE_LOCK_SECONDS = 2 * 3600
+
+
+def regen_worker(cache, src, script_rel, dest):
+    """The detached half of regen_tree: generate, then publish or record failure."""
+    cache, src, dest = pathlib.Path(cache), pathlib.Path(src), pathlib.Path(dest)
+    lock = dest.with_name(dest.name + ".lock")
+    failed = dest.with_name(dest.name + ".failed")
+    try:
+        _generate(cache, src, script_rel, dest)
+    except Exception as e:                         # recorded for every waiting caller
+        failed.write_text(str(e))
+    finally:
+        lock.unlink(missing_ok=True)
+    return 0
+
+
+def _generate(cache, src, script_rel, dest):
     tmp = pathlib.Path(tempfile.mkdtemp(prefix=".regen-", dir=cache))
     try:
         work = tmp / "pkg"
@@ -278,7 +331,7 @@ def regen_tree(cache_dir, src=None, script_rel="regen.sh"):
                 raise
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
-    return dest, False
+    return dest
 
 
 def resolve(directive, cache_dir, src=None, script_rel="regen.sh"):
@@ -394,6 +447,8 @@ def judge_command():
 def main():
     if len(sys.argv) == 3 and sys.argv[1] == "--warm":
         return warm(sys.argv[2])
+    if len(sys.argv) == 6 and sys.argv[1] == "--regen-worker":
+        return regen_worker(*sys.argv[2:6])
     if len(sys.argv) < 4:
         note("usage: validate input_file answer_file feedback_dir [args]  |  validate --warm DATA_DIR")
         return JUDGE_ERROR

@@ -95,7 +95,7 @@ def wrap_input_validators(pkg):
                 continue
             if (prog / "run").is_file():
                 (prog / "run").rename(prog / "run.orig")
-                cmd = '"$d/run.orig"'
+                cmd = 'sh "$d/run.orig"'      # judges run `run` with sh; it need not be executable
             else:
                 pys = sorted(prog.glob("*.py"))
                 if len(pys) != 1:
