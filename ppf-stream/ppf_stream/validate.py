@@ -43,11 +43,34 @@ Caching: `gen` is deterministic, so it runs once per test case and its output
 is kept in a `.cache` file keyed by a digest of the arguments and of every
 program involved.  Editing `gen` invalidates the cache automatically.  Set
 `PPF_STREAM_CACHE` to choose where they live; the default is beside the `.in`.
+
+Existing packages (mixed mode)
+------------------------------
+A problem that already has data and a generator that writes all of it does not
+need a per-case `gen`.  Keep every ordinary case as it is and replace only the
+large files with a one-line directive:
+
+    #ppf-stream regen secret/10_max.in sha256=<hex> size=<bytes>
+
+`regen/` beside this file holds a copy of what the problem's own generator
+needs, and `regen/regen.sh` runs it from a scratch copy of that directory,
+writing `data/...` exactly as it does in the package.  It runs once per cache;
+every file it wrote is then looked up by path.  The sha256 and size pin the
+bytes: a generator that does not reproduce them on this machine is a judge
+error, never a silent change of test data.  A `.ans` may be a directive too.
+
+A `.in` that is neither a directive nor (when `gen` exists) an argument line is
+streamed as it is, so small cases need no change.  Without a `judge` beside
+this file, `default_judge.py` compares output with the answer as the
+specification's default output validator does, honouring its flags.
+
+    validate.py --warm DATA_DIR    regenerate and check every directive, once
 """
 
 import hashlib
 import os
 import pathlib
+import shutil
 import signal
 import subprocess
 import sys
@@ -193,6 +216,113 @@ def materialize(args, cache_dir):
     return gen_path, (ans_path if tmp_ans is not None else None), False
 
 
+MARKER = b"#ppf-stream"
+REGEN_ENV = {"PYTHONHASHSEED": "0", "LC_ALL": "C", "TZ": "UTC"}
+
+
+def read_directive(path):
+    """The directive in `path` as {'kind', 'path', 'sha256', 'size'}, or None."""
+    try:
+        with open(path, "rb") as f:
+            head = f.read(len(MARKER))
+            if head != MARKER:
+                return None
+            line = (head + f.readline()).decode("ascii", "replace").split()
+    except OSError:
+        return None
+    if len(line) < 3 or line[1] != "regen":
+        raise RuntimeError(f"{path}: unknown directive: {' '.join(line)[:200]}")
+    d = {"kind": "regen", "path": line[2]}
+    for kv in line[3:]:
+        k, _, v = kv.partition("=")
+        d[k] = v
+    return d
+
+
+def tree_digest(root):
+    h = hashlib.sha256(b"ppf-stream-regen/1\x1f")
+    for f in sorted(x for x in root.rglob("*") if x.is_file()):
+        h.update(str(f.relative_to(root)).encode() + b"\x1f")
+        h.update(hashlib.sha256(f.read_bytes()).digest())
+    return h.hexdigest()
+
+
+def regen_tree(cache_dir, src=None, script_rel="regen.sh"):
+    """Run the regen script once in a scratch copy of `src`; return (tree, cache hit).
+
+    `src` defaults to regen/ beside this file (option 2, at judge time); a build
+    step passes the package itself and generators/regen.sh (option 1)."""
+    src = pathlib.Path(src) if src else HERE / "regen"
+    script = src / script_rel
+    if not script.is_file():
+        raise RuntimeError(f"no {script_rel} in {src}")
+    cache = pathlib.Path(cache_dir)
+    cache.mkdir(parents=True, exist_ok=True)
+    dest = cache / f"regen-{tree_digest(src)[:32]}"
+    if (dest / ".complete").exists():
+        return dest, True
+    tmp = pathlib.Path(tempfile.mkdtemp(prefix=".regen-", dir=cache))
+    try:
+        work = tmp / "pkg"
+        shutil.copytree(src, work, symlinks=True)
+        r = subprocess.run(["sh", script_rel], cwd=work, stdin=subprocess.DEVNULL,
+                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                           env=dict(os.environ, **REGEN_ENV))
+        if r.returncode != 0:
+            raise RuntimeError(f"regen.sh failed ({r.returncode}): {r.stdout.decode()[-600:]}")
+        (work / ".complete").write_text("")
+        try:
+            os.replace(work, dest)     # atomic; a concurrent winner keeps its copy
+        except OSError:
+            if not (dest / ".complete").exists():
+                raise
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    return dest, False
+
+
+def resolve(directive, cache_dir, src=None, script_rel="regen.sh"):
+    """Path to the bytes a directive names, checked against its pin."""
+    tree, hit = regen_tree(cache_dir, src, script_rel)
+    p = tree / "data" / directive["path"]
+    if not p.is_file():
+        raise RuntimeError(f"regen did not write data/{directive['path']}")
+    if "size" in directive and p.stat().st_size != int(directive["size"]):
+        raise RuntimeError(f"data/{directive['path']}: regenerated {p.stat().st_size} bytes, "
+                           f"pinned {directive['size']}: the generator does not reproduce it here")
+    if "sha256" in directive:
+        h = hashlib.sha256()
+        with open(p, "rb") as f:
+            for block in iter(lambda: f.read(1 << 20), b""):
+                h.update(block)
+        if h.hexdigest() != directive["sha256"]:
+            raise RuntimeError(f"data/{directive['path']}: sha256 differs from its pin: "
+                               "the generator does not reproduce it here")
+    return p, hit
+
+
+def regen_cache_dir():
+    return os.environ.get("PPF_STREAM_CACHE") or os.path.join(tempfile.gettempdir(), "ppf-stream")
+
+
+def warm(data_dir):
+    """Regenerate and check every directive under data_dir; print one line each."""
+    bad = 0
+    for f in sorted(pathlib.Path(data_dir).rglob("*")):
+        if not f.is_file():
+            continue
+        try:
+            d = read_directive(f)
+            if d is None:
+                continue
+            p, _ = resolve(d, regen_cache_dir())
+            print(f"ok    {f}  ({p.stat().st_size:,} bytes)")
+        except RuntimeError as e:
+            bad += 1
+            print(f"FAIL  {f}  {e}")
+    return 1 if bad else 0
+
+
 def stream_and_collect(data_path, team_out_path):
     """Write the test case to the submission while reading its answer back.
 
@@ -230,27 +360,53 @@ def stream_and_collect(data_path, team_out_path):
     return broke
 
 
+def prepare(input_file, answer_file):
+    """(bytes to stream, answer for the judge or None to use answer_file, note)."""
+    ans_path = None
+    try:
+        ans_dir = read_directive(answer_file)
+        if ans_dir is not None:
+            ans_path, _ = resolve(ans_dir, regen_cache_dir())
+        d = read_directive(input_file)
+        if d is not None:
+            p, hit = resolve(d, regen_cache_dir())
+            return p, ans_path, f"regen {d['path']} -> {p.stat().st_size} bytes, cache {'hit' if hit else 'miss'}"
+        if program("gen") is None:
+            return pathlib.Path(input_file), ans_path, None     # an ordinary case
+        args = pathlib.Path(input_file).read_text().split()
+        cache_dir = os.environ.get("PPF_STREAM_CACHE") or str(pathlib.Path(input_file).parent)
+        p, gen_ans, hit = materialize(args, cache_dir)
+        return p, ans_path or gen_ans, f"{' '.join(args)} -> {p.stat().st_size} bytes, cache {'hit' if hit else 'miss'}"
+    except OSError as e:
+        raise RuntimeError(str(e))
+
+
+def judge_command():
+    judge = program("judge")
+    if judge is not None:
+        return [str(judge)]
+    default = HERE / "default_judge.py"
+    if default.is_file():
+        return [sys.executable, str(default)]
+    return None
+
+
 def main():
+    if len(sys.argv) == 3 and sys.argv[1] == "--warm":
+        return warm(sys.argv[2])
     if len(sys.argv) < 4:
-        note("usage: validate input_file answer_file feedback_dir [args]")
+        note("usage: validate input_file answer_file feedback_dir [args]  |  validate --warm DATA_DIR")
         return JUDGE_ERROR
     input_file, answer_file, feedback_dir = sys.argv[1:4]
     extra = sys.argv[4:]
 
     try:
-        args = pathlib.Path(input_file).read_text().split()
-    except OSError as e:
-        note(f"cannot read {input_file}: {e}")
-        return JUDGE_ERROR
-
-    cache_dir = os.environ.get("PPF_STREAM_CACHE") or str(pathlib.Path(input_file).parent)
-    try:
-        data_path, ans_path, hit = materialize(args, cache_dir)
-    except (RuntimeError, OSError) as e:
+        data_path, ans_path, msg = prepare(input_file, answer_file)
+    except RuntimeError as e:
         note(str(e))
         return JUDGE_ERROR
-    note(f"{' '.join(args)} -> {data_path.stat().st_size} bytes, "
-         f"cache {'hit' if hit else 'miss'}")
+    if msg:
+        note(msg)
 
     with tempfile.TemporaryDirectory() as work:
         team_out = pathlib.Path(work) / "team_output"
@@ -263,13 +419,13 @@ def main():
                 pass
             return WA
 
-        judge = program("judge")
+        judge = judge_command()
         if judge is None:
-            note("no executable 'judge' beside validate.py")
+            note("no executable 'judge' and no default_judge.py beside validate.py")
             return JUDGE_ERROR
         with open(team_out, "rb") as fi:
             r = subprocess.run(
-                [str(judge), str(data_path),
+                [*judge, str(data_path),
                  str(ans_path) if ans_path else answer_file, feedback_dir, *extra],
                 stdin=fi)
     if r.returncode not in (AC, WA):

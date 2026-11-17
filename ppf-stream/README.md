@@ -38,6 +38,10 @@ ppf_stream/validate.py         the generic validator: gen -> filters -> stream -
 ppf_stream/materialize.py      run the pipeline for every case, emit a conventional package
 ppf_stream/verify.py           setter-side gate: input validation + every submission
 ppf_stream/run_interactive.py  local harness, so you can test without a judge system
+ppf_stream/convert.py          an existing package (or its LFS pointers) to pinned directives
+ppf_stream/expand.py           option 1: restore pinned data at build time
+ppf_stream/default_judge.py    the spec's default output validator, as a program
+ppf_stream/input_guard.py      lets existing input validators accept directives
 ```
 
 `materialize.py` is what keeps both worlds reachable: the streaming form for
@@ -121,6 +125,33 @@ a partial one. Set `PPF_STREAM_CACHE` to relocate them.
 Whether those files survive between invocations is up to the judge system.
 Where they do, generation is paid once; where they do not, it is paid per
 submission and must fit inside `validation_time`.
+
+## Existing packages: two options
+
+A problem that already has its data, and a generator that writes all of it,
+does not need rewriting. `convert.py` replaces each large file (or each Git LFS
+pointer) with a one-line directive pinned to the file's sha256 and size,
+
+    #ppf-stream regen secret/10_max.in sha256=<hex> size=<bytes>
+
+and records the problem's own regeneration command in `generators/regen.sh`.
+Small cases stay as they are. Then either:
+
+- **Option 1, at build time** (`--mode build`): `expand.py PACKAGE` restores the
+  data before `verifyproblem` or an upload. Judges and contestants see an
+  ordinary problem; something must run the expand step.
+- **Option 2, on the fly** (`--mode interactive`): the problem becomes
+  interactive in name only. `validate.py` regenerates once per cache, checks
+  every pin, and streams each case; `default_judge.py` is the specification's
+  default output validator; `input_guard.py` lets the existing input
+  validators accept directives. No contest system changes.
+
+In both, bytes that do not match their pin are an error, never a silent change
+of test data.
+
+    python3 ppf_stream/convert.py PKG --mode build --regen "python3 generators/gen.py"
+    python3 ppf_stream/expand.py PKG --check
+    python3 PKG/output_validators/ppf_stream/validate.py --warm PKG/data   # option 2
 
 ## Examples
 
