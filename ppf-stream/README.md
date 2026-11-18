@@ -44,6 +44,7 @@ ppf_stream/default_judge.py    the spec's default output validator, as a program
 ppf_stream/input_guard.py      lets existing input validators accept directives
 ppf_stream/mkpatch.py          keep a hand edit to generated data as a patch
 ppf_stream/sync.py             turn edited or expanded data back into pins + patches
+ppf_stream/package.py          build the upload: expanded, or option 2 (interactive)
 hooks/pre-commit               runs sync.py on staged changes (git config core.hooksPath)
 ```
 
