@@ -43,6 +43,8 @@ ppf_stream/expand.py           option 1: restore pinned data at build time
 ppf_stream/default_judge.py    the spec's default output validator, as a program
 ppf_stream/input_guard.py      lets existing input validators accept directives
 ppf_stream/mkpatch.py          keep a hand edit to generated data as a patch
+ppf_stream/sync.py             turn edited or expanded data back into pins + patches
+hooks/pre-commit               runs sync.py on staged changes (git config core.hooksPath)
 ```
 
 `materialize.py` is what keeps both worlds reachable: the streaming form for
@@ -157,6 +159,16 @@ the file: `mkpatch.py PKG secret/10_max.in EDITED` writes a unified diff to
 bytes. Regeneration applies the patch before checking the pin, in both options;
 a patch that no longer applies, because the generator changed, is an error.
 Five edits to a 2.6 MB case made a 360-byte patch.
+
+**Automatic patches.** A judge should not have to run `mkpatch.py` by hand.
+With `git config core.hooksPath <ppf-stream>/hooks`, the judge runs
+`expand.py PKG secret/10_max.in`, edits the file, and commits: the hook
+(`sync.py --staged`) finds data files whose committed version is a pin, puts
+the pin back where the bytes are unchanged, and, where they were edited, writes
+the patch against the generator's own output and re-pins to the edited bytes.
+A deleted case loses its patch; an edit that returns to the generator's output
+drops it. `sync.py PKG --repin` re-pins after a generator change, and
+`sync.py --guard BASE` fails CI when pinned data is committed as data.
 
 **Option 2 and end of input.** An interactive harness may keep the submission's
 input open until the validator exits (problemtools' `interactive` does, by

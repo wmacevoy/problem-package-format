@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Option 1: turn a package's directives back into test data, at build time.
 
-    expand.py PACKAGE [--check]
+    expand.py PACKAGE [--check] [CASE ...]
 
 Every `#ppf-stream regen <path> sha256=... size=...` file under PACKAGE/data is
 replaced, in place, by the bytes the problem's own generator writes there, after
@@ -10,7 +10,9 @@ copy of the package, via `generators/regen.sh`.  The result is an ordinary
 package: no interactive problem, no change for judges or contestants.
 
 Run it in CI before `verifyproblem`, and before uploading to a contest system.
-`--check` regenerates and checks every pin without writing anything.
+`--check` regenerates and checks every pin without writing anything.  Naming
+cases (e.g. secret/10_max.in) writes only those, for a judge about to edit one;
+sync.py turns the edit into a patch and writes the pin back.
 Generated trees are cached in PPF_STREAM_CACHE (default: the system temp dir).
 """
 
@@ -32,13 +34,20 @@ def load_validate():
 def main():
     args = [a for a in sys.argv[1:] if a != "--check"]
     check = "--check" in sys.argv[1:]
-    if len(args) != 1:
+    if len(args) < 1:
         print(__doc__.strip().split("\n\n")[1], file=sys.stderr)
         return 2
     pkg = pathlib.Path(args[0]).resolve()
     v = load_validate()
     found = [(f, v.read_directive(f)) for f in sorted((pkg / "data").rglob("*")) if f.is_file()]
     found = [(f, d) for f, d in found if d]
+    cases = set(args[1:])
+    if cases:
+        found = [(f, d) for f, d in found if f.relative_to(pkg / "data").as_posix() in cases]
+        missing = cases - {f.relative_to(pkg / "data").as_posix() for f, _ in found}
+        if missing:
+            print(f"expand: not a pinned case: {', '.join(sorted(missing))}", file=sys.stderr)
+            return 2
     if not found:
         print(f"expand: no directives in {pkg / 'data'}")
         return 0

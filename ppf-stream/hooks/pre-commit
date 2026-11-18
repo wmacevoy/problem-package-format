@@ -1,0 +1,5 @@
+#!/bin/sh
+# Pinned test data stays pinned: a staged edit of a generated case becomes
+# generators/patches/<case>.patch plus a new pin (tools/ppf_stream/sync.py).
+# Install once per clone:  git config core.hooksPath <path to ppf-stream>/hooks
+exec python3 "$(dirname "$0")/../ppf_stream/sync.py" --staged
