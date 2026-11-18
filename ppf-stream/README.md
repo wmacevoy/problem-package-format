@@ -259,3 +259,11 @@ that implies for what is otherwise an ordinary batch problem, samples need
 Generation time counts against `validation_time` when no cache survives.
 
 Reach for this when data size justifies it, not by default.
+
+## Slides
+
+Two decks explain the adapter on a real problem set, with problem names removed:
+[slides/](slides/) (on the site: https://wmacevoy.github.io/problem-package-format/ppf-stream/slides/).
+**Large Test Data: Three Options** is the decision; **Generated Test Data: Judges' Guide** is the
+judges' editing workflow and the chief judge's deployment choice. Open `slides/index.html` locally,
+or use the arrow keys on the site; `n` shows the speaker notes.

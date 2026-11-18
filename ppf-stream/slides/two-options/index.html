@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Large Test Data: Three Options</title>
+<!-- Built by tools/build-slides from deck.json, deck.css and slides/; edit those, not this file. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap">
+<style>
+:root {
+  --ink: #14213D;
+  --paper: #F7F5EF;
+  --paper2: #ECE8DD;
+  --muted: #4A5568;
+  --accent: #C2560E;
+  --blue: #1F5F9E;
+  --line: #CFC8B8;
+  --mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+body { font-family: 'IBM Plex Sans', Arial, sans-serif; color: var(--ink); }
+section { padding: 128px; background: var(--paper); color: var(--ink); display: flex; flex-direction: column; gap: 40px; }
+section.alt { background: var(--paper2); }
+section.dark { background: var(--ink); color: var(--paper); }
+h1 { font-size: 104px; font-weight: 700; line-height: 1.05; margin: 0; }
+h2 { font-size: 64px; font-weight: 700; line-height: 1.1; margin: 0; }
+h3 { font-size: 36px; font-weight: 600; line-height: 1.2; margin: 0; }
+p { font-size: 32px; line-height: 1.4; margin: 0; }
+.eyebrow { font-size: 24px; font-weight: 600; letter-spacing: 2px; color: var(--accent); }
+.dark .eyebrow { color: #F0A060; }
+.lede { font-size: 40px; color: var(--muted); line-height: 1.35; }
+.dark .lede { color: #C9D3E3; }
+.small { font-size: 24px; color: var(--muted); }
+.dark .small { color: #C9D3E3; }
+.row { display: flex; gap: 40px; }
+.col { display: flex; flex-direction: column; gap: 24px; flex: 1; }
+.card { background: #FFFDF8; border: 2px solid var(--line); border-radius: 12px; padding: 36px; display: flex; flex-direction: column; gap: 16px; flex: 1; }
+.alt .card { background: var(--paper); }
+.card .num { font-size: 88px; font-weight: 700; line-height: 1; color: var(--ink); }
+.card .num.hot { color: var(--accent); }
+.card .label { font-size: 28px; color: var(--muted); line-height: 1.35; }
+.code { font-family: var(--mono); font-size: 30px; background: var(--ink); color: #F3EEDF; padding: 36px 40px; border-radius: 12px; line-height: 1.5; }
+.code .k { color: #F0A060; }
+.flow { display: flex; align-items: center; gap: 24px; }
+.box { background: #FFFDF8; border: 2px solid var(--ink); border-radius: 12px; padding: 24px 28px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.box h3 { font-size: 32px; }
+.box p { font-size: 26px; color: var(--muted); line-height: 1.3; }
+.box.hot { border-color: var(--accent); background: #FBEFE4; }
+.arrow { width: 72px; height: 36px; background: var(--muted); flex: none; }
+.tag { font-size: 24px; font-weight: 600; color: var(--blue); }
+table { font-size: 28px; color: var(--ink); width: 100%; }
+ul { font-size: 32px; line-height: 1.4; margin: 0; padding-left: 40px; color: var(--ink); }
+li { margin-bottom: 14px; }
+.footer { position: absolute; left: 128px; bottom: 56px; width: 1664px; font-size: 24px; color: var(--muted); }
+.dark .footer { color: #C9D3E3; }
+.cover-title { font-size: 120px; font-weight: 700; line-height: 1.02; color: var(--paper); margin: 0; }
+.cover-band { width: 160px; height: 12px; background: #F0A060; }
+.fade-in { animation: rise 600ms ease-out both; }
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+html, body { margin: 0; height: 100%; background: #0E1626; overflow: hidden; }
+#stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: 0 0; }
+#stage > section { position: absolute; inset: 0; box-sizing: border-box; display: none; overflow: hidden; }
+#stage > section.current { display: flex; }
+#stage > section > aside { display: none; }
+#stage table { border-collapse: collapse; }
+#stage th { text-align: left; font-weight: 600; }
+#stage th, #stage td { padding: .35em .6em; border-bottom: 1px solid #CFC8B8; vertical-align: top; }
+#bar { position: fixed; right: 12px; bottom: 10px; font: 14px/1.4 system-ui, sans-serif; color: #E6E1D3; background: rgba(14,22,38,.72); padding: 4px 10px; border-radius: 6px; }
+#bar a { color: inherit; }
+#notes { position: fixed; left: 0; right: 0; bottom: 0; max-height: 40%; overflow: auto; display: none;
+         background: #F7F5EF; color: #14213D; font: 18px/1.5 system-ui, sans-serif; padding: 16px 24px;
+         box-shadow: 0 -4px 16px rgba(0,0,0,.3); }
+body.show-notes #notes { display: block; }
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  html, body { height: auto; overflow: visible; background: none; }
+  #stage { position: static; transform: none !important; width: 1920px; height: auto; }
+  #stage > section { position: relative; display: flex !important; width: 1920px; height: 1080px; break-after: page; }
+  #bar, #notes { display: none !important; }
+}
+</style>
+</head>
+<body>
+<div id="stage">
+<section id="cover" class="dark" style="justify-content:center;gap:48px">
+<div class="cover-band"></div>
+<p class="eyebrow">ICPC PROBLEM DATA · PROPOSAL FOR DECISION</p>
+<h1 class="cover-title">Large test data:<br>generate it, don’t store it</h1>
+<p class="lede" style="width:1400px">Two ways to drop Git LFS for generated secret data, plus option 3, a tar.xz shim where a generator is broken or missing, tested on the 41 problems of a regional contest’s repository that use it today.</p>
+<p class="small">November 2026 · prepared for the problem-repository maintainers and the Kattis team</p>
+<aside>This deck compares two ways to stop storing large, generated test data. Option 1 regenerates it at build time; option 2 regenerates it at judge time behind an interactive validator. Everything here was measured on real contest problems on private branches; nothing has been merged.</aside>
+</section>
+<section id="warning" class="dark" style="justify-content:center;gap:48px">
+<div style="display:flex;align-items:center;gap:32px"><svg viewBox="0 0 24 24" aria-label="Warning" role="img" style="color:#F0A060;width:96px;height:96px;flex:none"><path d="M12 3 2 21h20L12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 10v5M12 18v.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><p class="eyebrow" style="font-size:32px">WARNING</p></div>
+<h2 style="font-size:80px;color:#F7F5EF;width:1600px">ICPC will likely not support Git LFS in the future</h2>
+<p class="lede" style="width:1500px">LFS has hard resource limits. When a quota runs out, checkouts return pointer files instead of data, and nothing warns you before it happens.</p>
+<p class="lede" style="width:1500px;color:#F7F5EF"><b>We cannot risk a contest stopping mid-flight because of a hard resource limit.</b></p>
+<p class="small">So the question in this deck is not whether to leave LFS, but how.</p>
+<aside>Start here. GitHub LFS bandwidth and storage are pooled per account and capped; once exhausted, LFS is blocked for the rest of the billing period and every checkout gets pointer text. On a contest day that is an outage with no warning. The rest of the deck is about replacing LFS for generated data.</aside>
+</section>
+<section id="problem">
+<p class="eyebrow">THE PROBLEM</p>
+<h2>Large secret data in LFS costs bandwidth, breaks checkouts, and weakens tests</h2>
+<div class="row">
+<div class="card"><p class="num">527 MB</p><p class="label">of secret test data in LFS, 128 files in 41 draft problems. Every one was produced by a generator in the same problem.</p></div>
+<div class="card"><p class="num hot">3 PRs</p><p class="label">in one day (#281–283): checkouts without LFS fed pointer text to input validators. Each fix moved data back into Git.</p></div>
+<div class="card"><p class="num">200k → 160k</p><p class="label">nodes: one maximum case was cut to fit the 2 MiB limit. A weaker test, to avoid LFS.</p></div>
+</div>
+<p class="small">The weekly verifyall sweep checks out with lfs: true, so every run downloads all of it. LFS quota is pooled per account: when it runs out, checkouts get pointers, which look like corrupted data.</p>
+<aside>The data is not precious: every LFS file in these problems was written by a generator that is committed beside it. We are paying storage and bandwidth for bytes we can recompute, and the workarounds (moving data back into Git, shrinking cases) cost test quality.</aside>
+</section>
+<section id="finding" class="alt">
+<p class="eyebrow">WHAT THE GENERATORS CAN ALREADY DO</p>
+<h2>39 of 41 generators rebuild their LFS data byte for byte</h2>
+<div class="row">
+<div class="card"><p class="num">39</p><p class="label">reproduce every LFS file exactly (sha256 equal to the pointer): 36 as committed, one only with GCC, one with its script’s own line for that case.</p></div>
+<div class="card"><p class="num hot">2</p><p class="label">cannot: one generator crashes as committed; one no longer produces its committed data. 43 MB stays in LFS until fixed.</p></div>
+<div class="card"><p class="num">2</p><p class="label">more defects found on the way: small committed cases that drifted from their generator, and a script naming a renamed file.</p></div>
+</div>
+<p class="small">Checked without downloading LFS: an LFS pointer records the sha256 of its content, so regenerated bytes are compared with the pointer directly. Run: macOS, CPython 3.12, from a scratch copy of each package; GCC 15 where a generator needs &lt;bits/stdc++.h&gt;.</p>
+<aside>This is the key enabler. We do not need to trust that generators are deterministic: we measured it. And the same check found three real defects nobody had noticed, which is an argument for pinning regardless of which option is chosen.</aside>
+</section>
+<section id="pin">
+<p class="eyebrow">SHARED BY BOTH OPTIONS</p>
+<h2>Each large file becomes one pinned line</h2>
+<p class="code">data/secret/&lt;case&gt;.in<br><span class="k">#ppf-stream regen</span> secret/&lt;case&gt;.in<br>&#160;&#160;sha256=f8bce43d…6d6d73 size=2577788</p>
+<div class="row">
+<div class="col"><h3>The generator is the source</h3><p>generators/regen.sh runs the problem’s own command once, from a scratch copy of the package.</p></div>
+<div class="col"><h3>The pin is the guarantee</h3><p>Bytes that don’t match sha256 and size are an error, never a silent change of test data.</p></div>
+<div class="col"><h3>Small cases stay as they are</h3><p>Only the former LFS files change. A typical diff: 5 lines and a 6-line script.</p></div>
+</div>
+<aside>The sha256 is taken from the LFS pointer, so converting needs no download. Because the pin is checked before anything uses the bytes, a generator that stops reproducing (new Python, new compiler) fails loudly instead of judging against different data.</aside>
+</section>
+<section id="opt1">
+<p class="eyebrow">OPTION 1 · PRE-CACHE AT BUILD TIME</p>
+<h2>Regenerate before anything reads the package</h2>
+<div class="flow">
+<div class="box"><h3>Repository</h3><p>pins + generator; kilobytes</p></div>
+<div class="arrow"></div>
+<div class="box hot"><h3>expand.py</h3><p>run regen.sh once, check every pin, write the bytes</p></div>
+<div class="arrow"></div>
+<div class="box"><h3>Ordinary package</h3><p>the full data, as today</p></div>
+<div class="arrow"></div>
+<div class="box"><h3>CI · contest system</h3><p>verifyproblem, upload, judge: unchanged</p></div>
+</div>
+<div class="row">
+<div class="col"><h3>Contestants and judges</h3><p>See an ordinary batch problem. Nothing changes at contest time.</p></div>
+<div class="col"><h3>The cost</h3><p>Someone, or something, must run expand before a package leaves the repository. Upload a raw checkout and the data is one-line pins.</p></div>
+</div>
+<p class="small">Branches lfs/&lt;problem&gt;, plus ppf-stream-tools: one CI line runs expand.py before verifyproblem.</p>
+<aside>Option 1 keeps the contest exactly as it is. The data is generated once per build. The risk is procedural: a package exported without the expand step carries pins, not data, and an unprepared contest system would reject it at import, or, worse, judge against the pin text if no input validator runs.</aside>
+</section>
+<section id="opt2" class="alt">
+<p class="eyebrow">OPTION 2 · ON THE FLY, INTERACTIVE IN NAME ONLY</p>
+<h2>The output validator generates, caches, and pipes the data</h2>
+<div class="flow">
+<div class="box"><h3>Judge</h3><p>runs an interactive problem, as it already can</p></div>
+<div class="arrow"></div>
+<div class="box hot"><h3>validate.py</h3><p>first call: run regen once, check pins; later calls: cache</p></div>
+<div class="arrow"></div>
+<div class="box"><h3>Submission</h3><p>reads stdin as usual; end of input only if the harness delivers it</p></div>
+<div class="arrow"></div>
+<div class="box"><h3>Default judge</h3><p>the spec’s token compare, same flags</p></div>
+</div>
+<div class="row">
+<div class="col"><h3>Contest systems</h3><p>A conforming interactive package; input validators are wrapped to accept the pins. But see the end-of-input slide.</p></div>
+<div class="col"><h3>The cost</h3><p>The first validation after the cache is cleared waits for generation, and contestants’ programs run under the interactive harness.</p></div>
+</div>
+<p class="small">Branches lfs2/&lt;problem&gt;: problem.yaml gets validation: custom interactive; output_validators/ppf_stream carries the generator copy.</p>
+<aside>Option 2 changes nothing in contest systems: they already support interactive problems. A submission that reads its input and prints its answer works unchanged. What moves is time: the generator runs at judge time, once per cache. And the package duplicates the generator inside the output validator, because validators only see their own directory.</aside>
+</section>
+<section id="patch">
+<p class="eyebrow">HAND EDITS · BOTH OPTIONS</p>
+<h2>gen → patch → pin: keep the edit, not the file</h2>
+<div class="flow">
+<div class="box"><h3>Generator</h3><p>regen.sh, as committed</p></div>
+<div class="arrow"></div>
+<div class="box hot"><h3>Patch</h3><p>generators/patches/&lt;case&gt;.patch, a unified diff</p></div>
+<div class="arrow"></div>
+<div class="box"><h3>Pin</h3><p>sha256 of the edited bytes</p></div>
+<div class="arrow"></div>
+<div class="box"><h3>Data</h3><p>at build time (1) or judge time (2)</p></div>
+</div>
+<div class="row">
+<div class="card"><p class="num">360 B</p><p class="label">patch for five edits to a 2.6 MB case: a line added, one removed, the header and last line changed.</p></div>
+<div class="card"><p class="num">3.4×</p><p class="label">what xz gives instead, over the 485 MB (gzip: 2.6×). Option 3, next, uses it where no generator exists.</p></div>
+<div class="card"><p class="num hot">0</p><p class="label">silent changes: a patch that stops applying because the generator moved is an error with the line number.</p></div>
+</div>
+<p class="small">mkpatch.py writes the patch from an edited file and re-pins the case. Works in both options; in option 2 the patch travels inside the validator’s copy of generators/.</p>
+<aside>Problem setters often touch up generated data by hand. Storing the edited file defeats the purpose; storing a patch keeps the repository small and makes the edit reviewable as a diff, which is what LFS made impossible. Compression is the other route: it works in both options too, but saves 3x, not thousands of times, and leaves binary blobs in history.</aside>
+</section>
+<section id="zip">
+<p class="eyebrow">OPTION 3 · A TAR.XZ SHIM FOR A BROKEN OR MISSING GENERATOR</p>
+<h2>No working generator? A tar.xz stands in for it</h2>
+<div class="flow">
+<div class="box"><h3>Large cases</h3><p>hand-made, or from a generator that crashes or drifted</p></div>
+<div class="arrow"></div>
+<div class="box hot"><h3>archive.py</h3><p>adds them to generators/data.tar.xz, pins each case</p></div>
+<div class="arrow"></div>
+<div class="box"><h3>regen.sh</h3><p>unpacks it, after the generator if there is one</p></div>
+<div class="arrow"></div>
+<div class="box"><h3>Options 1 and 2</h3><p>deploy it like any other problem</p></div>
+</div>
+<div class="row">
+<div class="card"><p class="num">3.4×</p><p class="label">what tar.xz saves (tar.zst 3.3×, zip 2.6×): 485 MB would be 142 MB. Pins save over 1000×.</p></div>
+<div class="card"><p class="num">2</p><p class="label">problems use it today: problem A (17.8 → 7.3 MB) and problem B (24.9 → 4.3 MB).</p></div>
+<div class="card"><p class="num">6 s</p><p class="label">to unpack every archive, against 174 s to regenerate. Byte-for-byte reproducible.</p></div>
+</div>
+<p class="small">A shim, not a destination: it is real data in Git, re-committed on every change, and an archive over 2 MiB needs the maintainers’ exception to the problem repository’s datasize check.</p>
+<aside>Option 3 answers “what if the generator is broken, or there never was one?” The data goes into a reproducible tar.xz under generators/, and its cases become pins like generated ones, so expansion, option 2, patches and the commit hook all work unchanged. It costs about a third of the data’s size in the repository, instead of almost nothing, and every change re-commits the archive. Retire it when the generator is fixed: put the generator back in regen.sh, delete the archive, and re-pin.</aside>
+</section>
+<section id="contest">
+<p class="eyebrow">WHAT CONTEST SYSTEMS WOULD HAVE TO ADD · PC², DOMJUDGE, KATTIS</p>
+<h2>Option 1 needs an import step; option 2 needs end-of-input delivery</h2>
+<table>
+<tr><th style="width:28%">At problem import</th><th style="width:36%">Option 1 · pre-cache</th><th style="width:36%">Option 2 · on the fly</th></tr>
+<tr><td>Recognise pins</td><td>Detect #ppf-stream lines in data/</td><td>Not needed</td></tr>
+<tr><td>Run the generator</td><td>Sandboxed: CPU and wall limits, no network, scratch copy</td><td>Done by the validator at judge time</td></tr>
+<tr><td>Check the bytes</td><td>sha256 and size per file; refuse import on mismatch</td><td>Done by the validator, every call</td></tr>
+<tr><td>Store the result</td><td>As ordinary test data</td><td>Validator cache (temp dir or PPF_STREAM_CACHE)</td></tr>
+<tr><td>Interactive harness</td><td>Not involved</td><td>Close the submission’s input when the validator closes its output</td></tr>
+<tr><td>Without the change</td><td>Expand before upload (manual or CI artifact)</td><td>Works for programs that don’t read to end of input</td></tr>
+</table>
+<p class="small">Option 2’s optional extras: keep the validator cache across submissions, and a hook to warm it before the contest.</p>
+<aside>For option 1 the integration is one step in each system’s problem importer (PC², DOMjudge, Kattis): find directive files, run expand.py in a sandbox with the judge’s own limits, refuse the import if any pin fails. Until a system has that, CI can publish the expanded package as a build artifact to upload by hand. For option 2, each system already runs interactive problems, but problemtools’ harness, by design, keeps a submission’s input open until the validator exits, so programs that read to end of input hang; that harness behaviour must change (and DOMjudge’s and PC²’s checked), and the cache must be warmed on each judgehost before a contest. The generator’s toolchain (Python 3, C++ for some) is needed wherever generation runs.</aside>
+</section>
+<section id="timing">
+<p class="eyebrow">THE FIRST-RUN TRADE-OFF</p>
+<h2>Generation costs seconds, once; the risk is where it lands</h2>
+<div class="row" style="align-items:flex-start">
+<div class="col" style="flex:1.1">
+<div style="position:relative;width:860px;height:420px">
+<svg aria-label="Bar chart: cold regeneration time per problem. Under 1 s: 14 problems; 1 to 5 s: 19; 5 to 15 s: 5; 15 to 60 s: 0; over 60 s: 1." width="860" height="420" viewBox="0 0 860 420">
+<line x1="0" y1="360" x2="860" y2="360" stroke="#CFC8B8" stroke-width="2"/>
+<rect x="20" y="150" width="130" height="210" fill="#1F5F9E"/>
+<rect x="190" y="75" width="130" height="285" fill="#1F5F9E"/>
+<rect x="360" y="285" width="130" height="75" fill="#1F5F9E"/>
+<rect x="530" y="358" width="130" height="2" fill="#1F5F9E"/>
+<rect x="700" y="345" width="130" height="15" fill="#C2560E"/>
+</svg>
+<p style="position:absolute;left:20px;top:99px;width:130px;text-align:center;font-weight:600">14</p>
+<p style="position:absolute;left:190px;top:24px;width:130px;text-align:center;font-weight:600">19</p>
+<p style="position:absolute;left:360px;top:234px;width:130px;text-align:center;font-weight:600">5</p>
+<p style="position:absolute;left:530px;top:306px;width:130px;text-align:center;font-weight:600">0</p>
+<p style="position:absolute;left:700px;top:294px;width:130px;text-align:center;font-weight:600;color:#C2560E">1</p>
+<p class="small" style="position:absolute;left:0px;top:372px;width:860px;display:flex;justify-content:space-around">&lt;1 s · 1–5 s · 5–15 s · 15–60 s · &gt;60 s</p>
+</div>
+<p class="small">Cold regeneration per problem, 39 problems. Median 1.3 s; 174 s for all; slowest 78 s. Warm cache: under 0.1 s.</p>
+</div>
+<div class="col" style="flex:1">
+<h3>Option 1: before the contest</h3><p>Paid at build or import. Nobody waits on it during judging.</p>
+<h3>Option 2: at the first validation</h3><p>The submission is already running, waiting on stdin, while the validator generates. A judge’s wall-clock limit can turn that wait into a false time-limit verdict.</p>
+<h3>So option 2 must be warmed</h3><p>Run once to fill the cache before results count.</p>
+</div>
+</div>
+<aside>Measured on an Apple-silicon laptop, CPython 3.12, one problem at a time; judgehosts will differ, but the shape will not: most problems regenerate in about a second, a few take tens of seconds. The asymmetry is what matters. In option 1 the cost lands before the contest. In option 2 it lands inside the first judging run after a cache is cleared, while the submission’s wall clock is running.</aside>
+</section>
+<section id="eof" class="dark">
+<p class="eyebrow">OPTION 2’S HIDDEN COST · FOUND IN TESTING</p>
+<h2 style="color:#F7F5EF">Under problemtools, a submission never sees end of input</h2>
+<div class="row">
+<div class="col"><h3 style="color:#F0A060">What happens</h3><p style="color:#E6E1D3">The interactive harness keeps the submission’s input open until the validator exits, by design. The validator cannot exit before the submission answers. A program that reads to end of input waits forever: a false time-limit verdict.</p></div>
+<div class="col"><h3 style="color:#F0A060">Who it hits</h3><p style="color:#E6E1D3">sys.stdin.read(), while (cin &gt;&gt; x), for line in sys.stdin. Among these problems’ own accepted solutions: 6 of 8 in Python, none of 44 in C++.</p></div>
+</div>
+<p class="code" style="font-size:26px">reads one line → accepted in 0.07 s<br>reads to EOF   → killed at the 20 s wall limit</p>
+<p class="small">Same validator, same harness (problemtools/full, pinned by the repository’s CI). The fix is a harness change: deliver end of input when the validator closes its output. So option 2 is not change-free after all.</p>
+<aside>This was found running the repository’s own pinned verifier: the Python accepted solutions of one converted problem hung while its C++ ones passed. The harness source explains it: it deliberately keeps the write end of the validator-to-submission pipe open until the validator process exits, to make verdict races deterministic. Real interactive problems never wait for EOF, so this never mattered before. Kattis’s judge shares this lineage; DOMjudge and PC² should be checked.</aside>
+</section>
+<section id="space" class="alt">
+<p class="eyebrow">SPACE AND BANDWIDTH</p>
+<h2>485 MB of LFS data becomes kilobytes of pins</h2>
+<div class="row">
+<div class="card"><p class="num">485 MB</p><p class="label">LFS data in the 39 converted problems, now regenerated from pins and committed generators.</p></div>
+<div class="card"><p class="num">8 KB</p><p class="label">added in total by option 1: one regen.sh per problem; pins replace pointers line for line.</p></div>
+<div class="card"><p class="num">1.5 MB</p><p class="label">added in total by option 2: about 39 KB per problem for the validator and a copy of the generator.</p></div>
+</div>
+<table>
+<tr><th style="width:25%">Where data lives</th><th style="width:25%">Option 1</th><th style="width:25%">Option 2</th><th style="width:25%">Option 3</th></tr>
+<tr><td>Repository</td><td>Pins</td><td>Pins + validator</td><td>The archive (142 MB if all 39 used it)</td></tr>
+<tr><td>CI run</td><td>Generated, discarded after</td><td>Generated into a cache, discarded after</td><td>Unpacked, discarded after</td></tr>
+<tr><td>Contest system, idle</td><td>Full data, as imported</td><td>Pins; cache can be dropped</td><td>As option 1 or 2</td></tr>
+</table>
+<aside>Today the weekly verifyall sweep downloads all LFS data each run: about 527 MB times 4.3 runs, over 2 GB a month of LFS bandwidth, before any pull-request run. Both options remove that entirely; option 3 costs one archive per shimmed problem. They differ on contest systems: option 1 stores the full data wherever a package is imported; option 2 stores it only while a cache is warm.</aside>
+</section>
+<section id="proposal" class="dark">
+<p class="eyebrow">A PROPOSAL, FOR THOSE WHO DECIDE</p>
+<h2 style="color:#F7F5EF">Option 2, with a run-twice policy for the first run of the week</h2>
+<div class="row">
+<div class="col"><h3 style="color:#F0A060">Idle</h3><p style="color:#E6E1D3">Caches are dropped. A problem costs its pins and code: a fraction of its data.</p></div>
+<div class="col"><h3 style="color:#F0A060">First run of the week</h3><p style="color:#E6E1D3">Run twice. The first pass regenerates and checks every pin; its verdicts are not used. The second pass judges against a warm cache.</p></div>
+<div class="col"><h3 style="color:#F0A060">Before a contest</h3><p style="color:#E6E1D3">The same first pass on every judgehost, so no submission ever waits on generation.</p></div>
+</div>
+<p class="lede">Why: the space saving of option 2, without its first-run risk. Precondition: harnesses that deliver end of input, or option 1 for problems where solutions read to EOF.</p>
+<p class="small">Raised by the large-file-generator project as one option to weigh, not a decision. The choice belongs to the problem-repository maintainers and the contest-system teams.</p>
+<aside>This is the project lead’s suggestion, stated as a proposal. It combines option 2’s idle footprint with option 1’s property that nobody waits on generation during judging. The cost is one extra pass per week and one before each contest, about three minutes for these 39 problems on a laptop.</aside>
+</section>
+<section id="compare" class="alt">
+<p class="eyebrow">SIDE BY SIDE</p>
+<h2>Deploy two ways; shim where no generator works</h2>
+<table style="font-size:24px">
+<tr><th style="width:19%"></th><th style="width:27%">Option 1 · pre-cache at build</th><th style="width:27%">Option 2 · on the fly</th><th style="width:27%">Option 3 · tar.xz shim</th></tr>
+<tr><td>Contestant sees</td><td>An ordinary problem</td><td>An ordinary problem, run interactively</td><td>Whatever option 1 or 2 shows</td></tr>
+<tr><td>Contest system change</td><td>Import step, or expand before upload</td><td>Harness must deliver end of input</td><td>None of its own: deploys as option 1 or 2</td></tr>
+<tr><td>When generation runs</td><td>Once per build or import</td><td>Once per cache, at the first validation</td><td>Never: unpacked in seconds</td></tr>
+<tr><td>Space while idle</td><td>Repository: pins; imported copies: full</td><td>Pins, and a cache that can be dropped</td><td>Repository: the archive, about 3× smaller than the data</td></tr>
+<tr><td>Fails how</td><td>Build stops on a pin mismatch</td><td>Judge error on a pin mismatch, never a wrong verdict</td><td>Build stops on a pin mismatch, as in 1 and 2</td></tr>
+<tr><td>Package diff, typical</td><td>Pins + regen.sh</td><td>Pins + regen.sh + validator + generator copy + guards</td><td>Pins + regen.sh + data.tar.xz</td></tr>
+<tr><td>Main risk</td><td>Exporting without expanding</td><td>EOF-reading programs hang; first-run latency</td><td>Repository growth; no generator vouches for the data</td></tr>
+</table>
+<aside>Both options rest on the same pins and the same generator, and the conversion tool can produce either from the same package, so the choice is reversible per problem. The difference is when generation happens and who has to remember to make it happen. Option 3 is not a third way to deploy: it replaces a broken or missing generator with an archive that regen.sh unpacks, and its cases are pins, so it ships as option 1 or 2 like any other problem.</aside>
+</section>
+<section id="advice">
+<p class="eyebrow">FOR GENERATOR AUTHORS</p>
+<h2>Six habits that make any problem convert in one command</h2>
+<div class="row">
+<div class="col">
+<h3>1 · One command, writes only data/</h3><p>The common template (--mode all --root DIR) is why 30 problems converted with no per-problem work.</p>
+<h3>2 · Generate one case on request</h3><p>--case secret/10_max to stdout bounds the first run to one case. None of the 41 can today.</p>
+<h3>3 · Prove it in CI</h3><p>Pin by sha256 and regenerate on every change: the three drifted or broken generators would have failed at once.</p>
+</div>
+<div class="col">
+<h3>4 · Determinism you can rely on</h3><p>40 of 41 use randint, choice or shuffle, which Python does not promise to keep stable. Vendor a small RNG; seed per case.</p>
+<h3>5 · Portable builds, or none</h3><p>Standard headers and c++, not &lt;bits/stdc++.h&gt; and g++; better, compute answers in the generator.</p>
+<h3>6 · Fast enough for judge time</h3><p>Whole problem well under validation_time (60 s); the slowest here took 81 s.</p>
+</div>
+</div>
+<aside>Full text with the evidence for each point: docs/GENERATOR_ADVICE.md in the project’s private repository. The single most useful change is per-case generation, because it removes the first-run cost of option 2 and makes option 1 parallel.</aside>
+</section>
+<section id="adapter" class="alt">
+<p class="eyebrow">WHAT CHANGED IN THE ADAPTER</p>
+<h2>From a pure streaming pattern to converting real packages</h2>
+<div class="row">
+<div class="card"><h3>Mixed packages</h3><p class="label">Only pinned files are generated; every other case streams as committed. No per-case gen required.</p></div>
+<div class="card"><h3>Whole-problem regen</h3><p class="label">Runs the author’s own command once in a scratch copy, caches the tree, checks each pin.</p></div>
+<div class="card"><h3>Default judge</h3><p class="label">The spec’s default output validator as a program, with its flags: 40 of 41 problems need it.</p></div>
+</div>
+<div class="row">
+<div class="card"><h3>Input guard</h3><p class="label">Existing input validators run unchanged on real data and accept the one-line pins.</p></div>
+<div class="card"><h3>expand.py</h3><p class="label">Option 1’s build step: restore every pin in place, or check only.</p></div>
+<div class="card"><h3>convert.py</h3><p class="label">LFS pointers to pins, LFS rules removed, either option, legacy packages.</p></div>
+</div>
+<aside>The original appendix assumed a new problem written for streaming: one gen per case, one judge. Real problems have hand-made small cases, default validation, input validators and generate-everything scripts, so the adapter grew these six pieces. All are generic: no problem-specific code.</aside>
+</section>
+<section id="decide">
+<p class="eyebrow">WHAT NEEDS DECIDING</p>
+<h2>Six decisions, and who owns each</h2>
+<table>
+<tr><th style="width:48%">Decision</th><th style="width:30%">Owner</th><th style="width:22%">Ready to try</th></tr>
+<tr><td>Option 1 or 2 per problem; option 3 where the generator is broken</td><td>problem-repository maintainers</td><td>78 branches</td></tr>
+<tr><td>Add an import step for pins (option 1)</td><td>PC², DOMjudge, Kattis</td><td>expand.py</td></tr>
+<tr><td>Deliver end of input in interactive runs (option 2)</td><td>PC², DOMjudge, Kattis</td><td>Repro test</td></tr>
+<tr><td>Cache policy: warm before contests, run twice weekly</td><td>Contest operations</td><td>validate.py --warm</td></tr>
+<tr><td>Fix 4 broken or drifted generators; 2 GCC-only builds</td><td>Problem authors</td><td>Report per problem</td></tr>
+<tr><td>Adopt the six generator habits in the template</td><td>problem-repository maintainers</td><td>Advice doc</td></tr>
+</table>
+<p class="small">Branches: a private fork, lfs/&lt;problem&gt; (option 1, on ppf-stream-tools) and lfs2/&lt;problem&gt; (option 2). Tooling and review: the project’s private repository; the adapter is public on wmacevoy/problem-package-format.</p>
+<aside>Nothing has been merged into the problem repository. Every branch is on a private fork and can be opened as a pull request when the maintainers choose an option. The contest-system question is independent of the rest: option 2 works today, option 1 works today if packages are expanded before upload.</aside>
+</section>
+</div>
+<div id="bar"><span id="pos"></span> · ← → to move · n for notes · <a href="../">all decks</a></div>
+<div id="notes"></div>
+<script>(function () {
+  var stage = document.getElementById('stage');
+  var slides = Array.prototype.slice.call(stage.children);
+  var bar = document.getElementById('pos'), notes = document.getElementById('notes');
+  var i = 0;
+  function fit() {
+    var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    stage.style.transform = 'scale(' + s + ') translate(-50%, -50%)';
+  }
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach(function (s, k) { s.classList.toggle('current', k === i); });
+    bar.textContent = (i + 1) + ' / ' + slides.length;
+    var a = slides[i].querySelector('aside');
+    notes.textContent = a ? a.textContent : '(no notes)';
+    if (location.hash !== '#' + (i + 1)) history.replaceState(null, '', '#' + (i + 1));
+  }
+  function fromHash() { var n = parseInt(location.hash.slice(1), 10); show(isNaN(n) ? 0 : n - 1); }
+  document.addEventListener('keydown', function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ') { show(i + 1); e.preventDefault(); }
+    else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') { show(i - 1); e.preventDefault(); }
+    else if (k === 'Home') show(0);
+    else if (k === 'End') show(slides.length - 1);
+    else if (k === 'n' || k === 'N') document.body.classList.toggle('show-notes');
+  });
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('a, #notes, #bar')) return;
+    show(e.clientX > window.innerWidth / 2 ? i + 1 : i - 1);
+  });
+  window.addEventListener('resize', fit);
+  window.addEventListener('hashchange', fromHash);
+  fit(); fromHash();
+})();</script>
+</body>
+</html>

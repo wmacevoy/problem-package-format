@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generated Test Data: Judges&#x27; Guide</title>
+<!-- Built by tools/build-slides from deck.json, deck.css and slides/; edit those, not this file. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap">
+<style>
+:root {
+  --ink: #14213D;
+  --paper: #F7F5EF;
+  --paper2: #ECE8DD;
+  --muted: #4A5568;
+  --accent: #C2560E;
+  --blue: #1F5F9E;
+  --line: #CFC8B8;
+  --mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+body { font-family: 'IBM Plex Sans', Arial, sans-serif; color: var(--ink); }
+section { padding: 128px; background: var(--paper); color: var(--ink); display: flex; flex-direction: column; gap: 40px; }
+section.alt { background: var(--paper2); }
+section.dark { background: var(--ink); color: var(--paper); }
+h1 { font-size: 104px; font-weight: 700; line-height: 1.05; margin: 0; }
+h2 { font-size: 64px; font-weight: 700; line-height: 1.1; margin: 0; }
+h3 { font-size: 36px; font-weight: 600; line-height: 1.2; margin: 0; }
+p { font-size: 32px; line-height: 1.4; margin: 0; }
+.eyebrow { font-size: 24px; font-weight: 600; letter-spacing: 2px; color: var(--accent); }
+.dark .eyebrow { color: #F0A060; }
+.lede { font-size: 40px; color: var(--muted); line-height: 1.35; }
+.dark .lede { color: #C9D3E3; }
+.small { font-size: 24px; color: var(--muted); }
+.dark .small { color: #C9D3E3; }
+.row { display: flex; gap: 40px; }
+.col { display: flex; flex-direction: column; gap: 24px; flex: 1; }
+.card { background: #FFFDF8; border: 2px solid var(--line); border-radius: 12px; padding: 36px; display: flex; flex-direction: column; gap: 16px; flex: 1; }
+.alt .card { background: var(--paper); }
+.card .num { font-size: 88px; font-weight: 700; line-height: 1; color: var(--ink); }
+.card .num.hot { color: var(--accent); }
+.card .label { font-size: 28px; color: var(--muted); line-height: 1.35; }
+.code { font-family: var(--mono); font-size: 30px; background: var(--ink); color: #F3EEDF; padding: 36px 40px; border-radius: 12px; line-height: 1.5; }
+.code .k { color: #F0A060; }
+.flow { display: flex; align-items: center; gap: 24px; }
+.box { background: #FFFDF8; border: 2px solid var(--ink); border-radius: 12px; padding: 24px 28px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.box h3 { font-size: 32px; }
+.box p { font-size: 26px; color: var(--muted); line-height: 1.3; }
+.box.hot { border-color: var(--accent); background: #FBEFE4; }
+.arrow { width: 72px; height: 36px; background: var(--muted); flex: none; }
+.tag { font-size: 24px; font-weight: 600; color: var(--blue); }
+table { font-size: 28px; color: var(--ink); width: 100%; }
+ul { font-size: 32px; line-height: 1.4; margin: 0; padding-left: 40px; color: var(--ink); }
+li { margin-bottom: 14px; }
+.footer { position: absolute; left: 128px; bottom: 56px; width: 1664px; font-size: 24px; color: var(--muted); }
+.dark .footer { color: #C9D3E3; }
+.cover-title { font-size: 120px; font-weight: 700; line-height: 1.02; color: var(--paper); margin: 0; }
+.cover-band { width: 160px; height: 12px; background: #F0A060; }
+.fade-in { animation: rise 600ms ease-out both; }
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+.step { font-size: 24px; font-weight: 700; color: var(--accent); letter-spacing: 1px; }
+.mono { font-family: var(--mono); font-size: 26px; color: var(--ink); }
+.pill { font-size: 24px; font-weight: 600; padding: 6px 16px; border-radius: 999px; background: #FBEFE4; color: #8A3A06; align-self: flex-start; }
+.pill.ok { background: #E3ECF6; color: #1F4F86; }
+html, body { margin: 0; height: 100%; background: #0E1626; overflow: hidden; }
+#stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: 0 0; }
+#stage > section { position: absolute; inset: 0; box-sizing: border-box; display: none; overflow: hidden; }
+#stage > section.current { display: flex; }
+#stage > section > aside { display: none; }
+#stage table { border-collapse: collapse; }
+#stage th { text-align: left; font-weight: 600; }
+#stage th, #stage td { padding: .35em .6em; border-bottom: 1px solid #CFC8B8; vertical-align: top; }
+#bar { position: fixed; right: 12px; bottom: 10px; font: 14px/1.4 system-ui, sans-serif; color: #E6E1D3; background: rgba(14,22,38,.72); padding: 4px 10px; border-radius: 6px; }
+#bar a { color: inherit; }
+#notes { position: fixed; left: 0; right: 0; bottom: 0; max-height: 40%; overflow: auto; display: none;
+         background: #F7F5EF; color: #14213D; font: 18px/1.5 system-ui, sans-serif; padding: 16px 24px;
+         box-shadow: 0 -4px 16px rgba(0,0,0,.3); }
+body.show-notes #notes { display: block; }
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  html, body { height: auto; overflow: visible; background: none; }
+  #stage { position: static; transform: none !important; width: 1920px; height: auto; }
+  #stage > section { position: relative; display: flex !important; width: 1920px; height: 1080px; break-after: page; }
+  #bar, #notes { display: none !important; }
+}
+</style>
+</head>
+<body>
+<div id="stage">
+<section id="cover" class="dark" style="justify-content:center;gap:48px">
+<div class="cover-band"></div>
+<p class="eyebrow">ICPC PROBLEM DATA · JUDGES’ GUIDE</p>
+<h1 class="cover-title">Changing generated<br>test data, and shipping it</h1>
+<p class="lede" style="width:1400px">Part 1, for judges: edit a large case and let the commit hook turn it into a patch. Part 2, for the chief judge: choose, per problem, how it goes to the contest system.</p>
+<p class="small">November 2026 · a regional contest’s problem repository</p>
+<aside>This deck is the how-to that goes with the decision deck. Large secret files are no longer stored; each is a one-line pin that the problem’s own generator reproduces. Judges still edit data by hand; the tooling turns those edits into small patches. The chief judge decides per problem whether the contest system receives the full data or generates it on the judgehost.</aside>
+</section>
+<section id="pins">
+<p class="eyebrow">PART 1 · JUDGES · WHAT CHANGED</p>
+<h2>A large case is now one line: a pin</h2>
+<div class="code">data/secret/&lt;case&gt;.in:<br><span class="k">#ppf-stream regen</span> secret/&lt;case&gt;.in sha256=f8bce43d… size=2577788</div>
+<div class="row">
+<div class="card"><h3>The generator makes it</h3><p class="label">generators/regen.sh runs the problem’s own generator. The pin says exactly which bytes it must produce.</p></div>
+<div class="card"><h3>Hand edits ride along</h3><p class="label">An edit is kept as generators/patches/&lt;case&gt;.patch, applied after the generator, before the pin is checked.</p></div>
+<div class="card"><h3>CI checks every byte</h3><p class="label">verifyproblem runs on the restored data. A wrong byte stops the build; it never judges against wrong data.</p></div>
+</div>
+<p class="small">41 problems, 128 large files. Small cases (under 2 MiB) stay ordinary files.</p>
+<aside>Judges used to see multi-megabyte files, stored in Git LFS. Now each of those files is a pin: a sha256 and a size. The data comes back whenever it is needed, from the generator, plus any patch, and is checked against the pin. Nothing about small hand-written cases changes.</aside>
+</section>
+<section id="setup" class="alt">
+<p class="eyebrow">PART 1 · JUDGES · ONCE PER CLONE</p>
+<h2>Turn on the commit hook</h2>
+<div class="code">git config core.hooksPath tools/hooks</div>
+<div class="row">
+<div class="col"><h3>What it does</h3><p>Before each commit, it looks for pinned cases you staged as data. Unchanged ones go back to their pin. Edited ones become a patch plus a new pin.</p></div>
+<div class="col"><h3>What you need</h3><p>Python 3 and the generator’s toolchain (a C++ compiler for some problems). The same things CI uses.</p></div>
+</div>
+<p class="small">Without the hook, run python3 tools/ppf_stream/sync.py problems/drafts/&lt;problem&gt; before committing. It does the same, for one problem.</p>
+<aside>One command, once per clone. The hook lives in the repository, so everyone gets the same version. If someone forgets it, nothing is lost: the pull-request check refuses pinned data committed as data and says what to run.</aside>
+</section>
+<section id="edit">
+<p class="eyebrow">PART 1 · JUDGES · THE EVERYDAY CASE</p>
+<h2>Change a case in three steps</h2>
+<div class="col" style="gap:20px">
+<div class="row" style="align-items:center;gap:32px"><p class="step" style="width:170px">1 · OPEN</p><div class="code" style="flex:1;padding:24px 32px">python3 tools/ppf_stream/expand.py problems/drafts/&lt;problem&gt; secret/&lt;case&gt;.in</div></div>
+<div class="row" style="align-items:center;gap:32px"><p class="step" style="width:170px">2 · EDIT</p><div class="code" style="flex:1;padding:24px 32px">$EDITOR problems/drafts/&lt;problem&gt;/data/secret/&lt;case&gt;.in</div></div>
+<div class="row" style="align-items:center;gap:32px"><p class="step" style="width:170px">3 · COMMIT</p><div class="code" style="flex:1;padding:24px 32px">git add problems/drafts/&lt;problem&gt;<br>git commit -m "&lt;problem&gt;: add a boundary edge"</div></div>
+</div>
+<div class="card" style="flex:none"><p class="mono">sync: secret/&lt;case&gt;.in: 194-byte patch; pinned to the edited bytes (2,577,791 bytes)</p><p class="label">The commit holds a 194-byte patch and a one-line pin, not 2.6 MB.</p></div>
+<aside>Step 1 writes the full generated file for that one case, with any earlier patch already applied. Edit it any way you like: add a line, remove a line, change a value. Then stage the problem directory and commit. The hook prints one line per file it handled. Stage the problem directory rather than using git commit -a: two .cpp files under problems/ready show as modified in every checkout and would be swept in.</aside>
+</section>
+<section id="hook" class="alt">
+<p class="eyebrow">PART 1 · JUDGES · WHAT THE HOOK DECIDES</p>
+<h2>Each staged pinned case gets one of four outcomes</h2>
+<table>
+<tr><th style="width:38%">You staged…</th><th style="width:62%">The hook…</th></tr>
+<tr><td>Data identical to its pin</td><td>Writes the pin back. Opening every case and committing changes nothing.</td></tr>
+<tr><td>Data you edited</td><td>Diffs it against the generator’s own output, writes the patch, re-pins to your bytes</td></tr>
+<tr><td>Data edited back to the generator’s bytes</td><td>Removes the old patch and re-pins</td></tr>
+<tr><td>A deleted case</td><td>Removes its patch, if it had one</td></tr>
+</table>
+<div class="row">
+<div class="card"><p class="num">144–194 B</p><p class="label">patch per edit in testing, against 2.5–5.5 MB cases</p></div>
+<div class="card"><p class="num hot">0</p><p class="label">bytes of data enter Git history; the patch is checked to reproduce your file before it is written</p></div>
+</div>
+<aside>A patch is always measured against the generator’s raw output, never against an earlier patch, so editing the same case twice leaves one patch, not two. If the hook finds that nothing remains to commit, because every staged case matched its pin, it stops the commit instead of leaving an empty one.</aside>
+</section>
+<section id="changes">
+<p class="eyebrow">PART 1 · JUDGES · OTHER CHANGES</p>
+<h2>Adding, removing, and changing the generator</h2>
+<table>
+<tr><th style="width:26%">To…</th><th style="width:74%">Do this</th></tr>
+<tr><td>Add a small case</td><td>Add the .in and .ans as usual: under 2 MiB, they are ordinary files</td></tr>
+<tr><td>Add a large case</td><td>Make the generator write it, then <span style="color:#1F5F9E">sync.py &lt;problem&gt; --repin secret/&lt;new&gt;.in</span></td></tr>
+<tr><td>Remove a case</td><td>git rm the pin (and its .ans) and commit; the hook drops its patch</td></tr>
+<tr><td>Change the generator</td><td><span style="color:#1F5F9E">sync.py &lt;problem&gt; --repin</span> re-pins every case that changed</td></tr>
+<tr><td>Look at all the data</td><td><span style="color:#1F5F9E">expand.py &lt;problem&gt;</span>; committing puts untouched cases back as pins</td></tr>
+</table>
+<p class="small">Commands are under tools/ppf_stream/, run with python3. The full guide is tools/ppf_stream/EDITING.md.</p>
+<aside>Most changes are the everyday edit on the previous slides. A generator change is the one that needs a deliberate step: re-pinning says “the new output is correct”. Existing patches are applied on top during re-pinning; one that no longer fits stops the command and names the case.</aside>
+</section>
+<section id="shim" class="alt">
+<p class="eyebrow">PART 1 · JUDGES · OPTION 3</p>
+<h2>No working generator? Shim it with a tar.xz</h2>
+<div class="code">python3 tools/ppf_stream/archive.py problems/drafts/&lt;problem&gt; secret/&lt;case&gt;.in<br><span class="k"># generator crashes: expand, then archive every large case and stop running it</span><br>python3 tools/ppf_stream/archive.py problems/drafts/&lt;problem&gt; <span class="k">--replace</span></div>
+<div class="row">
+<div class="card"><h3>What it does</h3><p class="label">Adds the cases to generators/data.tar.xz and pins them. regen.sh unpacks the archive after the generator, so archived cases win.</p></div>
+<div class="card"><h3>What stays the same</h3><p class="label">Opening, editing, the hook, patches, and both ways of deploying. problem A and problem B work this way today.</p></div>
+<div class="card"><h3>The cost</h3><p class="label">Real data in Git, about a third of its size, re-committed on every change. Over 2 MiB needs a datasize exception.</p></div>
+</div>
+<p class="small">When the generator is fixed: put it back in regen.sh, delete the archive, and run sync.py &lt;problem&gt; --repin.</p>
+<aside>Use option 3 for a hand-made large case, a generator that crashes, or one whose output has drifted from the data the problem was tested with. Name the cases to archive, or let archive.py take every data file of 2 MiB or more. The archive is reproducible byte for byte, so rebuilding it from the same files changes nothing in Git.</aside>
+</section>
+<section id="trouble" class="alt">
+<p class="eyebrow">PART 1 · JUDGES · WHEN SOMETHING SAYS NO</p>
+<h2>Four messages and what they mean</h2>
+<table>
+<tr><th style="width:40%">Message</th><th style="width:60%">What to do</th></tr>
+<tr><td>CI: pinned test data committed as data</td><td>The hook was off. Run sync.py on the problem, commit the pin and patch.</td></tr>
+<tr><td>A patch does not apply (after a generator change)</td><td>The generator moved under your edit. Open the case, redo the edit, commit.</td></tr>
+<tr><td>CI: sha256 mismatch for a case</td><td>The generator no longer makes the pinned bytes. Fix it, or re-pin if the new output is right.</td></tr>
+<tr><td>sync: nothing left to commit</td><td>Every staged case matched its pin. Nothing was lost; the commit was stopped on purpose.</td></tr>
+</table>
+<p class="small">A generator that can’t be fixed in time: use option 3, the tar.xz shim on the previous slide.</p>
+<aside>Every failure is loud and names a file. The one that matters most is the sha256 mismatch: it means the data a contestant would be judged on is not the data the problem was tested with, so the build stops rather than guessing.</aside>
+</section>
+<section id="choose" class="dark" style="justify-content:center;gap:48px">
+<p class="eyebrow">PART 2 · CHIEF JUDGE · THE CHOICE</p>
+<h2 style="font-size:80px;color:#F7F5EF;width:1600px">On an unchanged contest system, only option 2 keeps the data out of it</h2>
+<div class="row">
+<div class="col"><h3 style="color:#F0A060">Option 2 · generate on the judgehost</h3><p style="color:#E6E1D3">The problem is uploaded interactive in name only. Its validator regenerates the data on first use, checks every pin, and caches it. The contest system stores pins and generators.</p></div>
+<div class="col"><h3 style="color:#F0A060">Fallback · upload expanded</h3><p style="color:#E6E1D3">The package is expanded before upload and is an ordinary problem. The contest system stores the full data, as it does today. Use it where option 2 can’t be.</p></div>
+</div>
+<p class="small">Generating at import (option 1 inside the contest system) needs PC², DOMjudge or Kattis to add an import step, so it is not a choice for this contest.</p>
+<aside>The chief judge picks, per problem, how it reaches the contest system. Without any change to PC², DOMjudge or Kattis there are two ways: option 2, the only one that generates on the contest side, and uploading the expanded package, which works everywhere but stores the full data. The next slides say which problems can use option 2 and how to run it safely.</aside>
+</section>
+<section id="compare" class="alt">
+<p class="eyebrow">PART 2 · CHIEF JUDGE · WHAT EACH COSTS</p>
+<h2>Option 2 uploads a sixth of the data</h2>
+<div class="row">
+<div class="card"><p class="num">192 MB</p><p class="label">uploaded expanded: the 36 problems that can use option 2, as zips</p></div>
+<div class="card"><p class="num hot">31 MB</p><p class="label">the same 36 problems as option 2: pins, generators, validator</p></div>
+<div class="card"><p class="num">1 s</p><p class="label">median first-use generation per problem; 80 s for problem G</p></div>
+</div>
+<table>
+<tr><th style="width:30%"></th><th style="width:35%">Upload expanded</th><th style="width:35%">Option 2</th></tr>
+<tr><td>Contest system stores</td><td>Full data</td><td>Pins; full data only in each judgehost’s cache</td></tr>
+<tr><td>Contestants see</td><td>An ordinary problem</td><td>An ordinary problem, judged interactively</td></tr>
+<tr><td>First submission waits</td><td>Never</td><td>Until warmed: see the last slide</td></tr>
+</table>
+<aside>Sizes are the zips package.py wrote for all 41 problems, deflate-compressed, on the option1 branch. Uploaded expanded, the 36 option-2 candidates total 192 MB; as option 2, 31 MB. Every judgehost still holds the full data in its cache while it is warm, so the saving is in the contest system’s problem store and in uploads, not on the judgehosts.</aside>
+</section>
+<section id="decide">
+<p class="eyebrow">PART 2 · CHIEF JUDGE · PER PROBLEM</p>
+<h2>Four questions decide each problem</h2>
+<table>
+<tr><th style="width:52%">Question</th><th style="width:24%">If yes</th><th style="width:24%">If no</th></tr>
+<tr><td>Does it have its own output validator, or is it already interactive?</td><td>Upload expanded</td><td>Next question</td></tr>
+<tr><td>Does an accepted solution read input to end of file?</td><td>Upload expanded</td><td>Next question</td></tr>
+<tr><td>Do the judgehosts keep the validator’s cache between runs?</td><td>Next question</td><td>Upload expanded</td></tr>
+<tr><td>Can every judgehost be warmed before the contest?</td><td>Option 2</td><td>Upload expanded</td></tr>
+</table>
+<p class="small">package.py checks the first question and warns on the second. The last two are about your contest system and judgehosts: confirm them in the test contest.</p>
+<aside>The first question is mechanical: option 2 replaces the output validator, so a problem with its own cannot use it yet. The second matters because problemtools’ interactive harness keeps a submission’s input open until the validator exits; a program that reads to end of file waits forever and times out. Many Python solutions read that way. The third and fourth are about the judgehosts: if the cache is thrown away after every run, every submission waits for generation.</aside>
+</section>
+<section id="problems">
+<p class="eyebrow">PART 2 · CHIEF JUDGE · THE 41 PROBLEMS TODAY</p>
+<h2>36 can use option 2; 5 should upload expanded</h2>
+<table>
+<tr><th style="width:30%">Problem</th><th style="width:22%">Deploy</th><th style="width:48%">Why</th></tr>
+<tr><td>problem A</td><td>Upload expanded</td><td>Has its own output validator (data from an option-3 shim)</td></tr>
+<tr><td>problem C</td><td>Upload expanded</td><td>3 accepted Python solutions read to end of file</td></tr>
+<tr><td>problem D</td><td>Upload expanded</td><td>1 accepted Python solution reads to end of file</td></tr>
+<tr><td>problem E</td><td>Upload expanded</td><td>1 accepted Python solution reads to end of file</td></tr>
+<tr><td>problem F</td><td>Upload expanded</td><td>1 accepted Python solution reads to end of file</td></tr>
+<tr><td>The other 36</td><td>Option 2</td><td>If the judgehosts keep the cache and are warmed; problem B via its shim</td></tr>
+</table>
+<p class="small">The end-of-file check is a pattern match on accepted Python solutions; the second run on the warming slide is the real test. A flagged problem moves to option 2 once its solutions read only what they need.</p>
+<aside>This table comes from running package.py on every problem on the option1 branch. The four end-of-file problems are not broken; their Python solutions are simply written to read all input at once, which is normal outside interactive judging. Rewriting those solutions, or a harness that closes input, would move them to option 2. problem B can use option 2: its data comes from an archive rather than a generator, which works the same way.</aside>
+</section>
+<section id="build">
+<p class="eyebrow">PART 2 · CHIEF JUDGE · BUILDING THE UPLOAD</p>
+<h2>One command per problem, either way</h2>
+<div class="code">python3 tools/ppf_stream/package.py problems/drafts/&lt;problem&gt; <span class="k">--option 2</span><br>python3 tools/ppf_stream/package.py problems/drafts/problem C <span class="k">--option 1</span></div>
+<div class="row">
+<div class="col"><h3>--option 2</h3><p>Builds the interactive package, regenerates once and checks every pin, then writes &lt;problem&gt;-option2.zip. Refuses a problem with its own validator; warns on end-of-file readers.</p></div>
+<div class="col"><h3>--option 1</h3><p>Expands every pin, checks it, and writes an ordinary package as problem C-option1.zip, ready for any contest system.</p></div>
+</div>
+<p class="small">Never touches the repository: it builds in a scratch copy. Files sit at the zip root with problem.yaml on top.</p>
+<aside>package.py is the only command the chief judge needs. It works from the option1 branch, where every problem is pinned. Option 2 also warms this machine’s cache as a side effect of checking the pins, which is not the judgehosts’ cache: those are warmed by the test contest. Upload the zips the usual way for PC², DOMjudge or Kattis.</aside>
+</section>
+<section id="contestday" class="alt">
+<p class="eyebrow">PART 2 · CHIEF JUDGE · BEFORE THE CONTEST</p>
+<h2>Warm every judgehost, then run twice</h2>
+<div class="row">
+<div class="card"><p class="step">1 · TEST CONTEST</p><h3>Judge every accepted solution</h3><p class="label">The first run on each judgehost regenerates and checks the pins. Its verdicts don’t count: a time limit hit while generating is expected.</p></div>
+<div class="card"><p class="step">2 · SECOND RUN</p><h3>Judge them again</h3><p class="label">Now the cache is warm. Every accepted solution must pass. A timeout here is the end-of-file problem: upload that one expanded.</p></div>
+<div class="card"><p class="step">3 · CONTEST</p><h3>Don’t clear the cache</h3><p class="label">The cache is in the temp directory, or PPF_STREAM_CACHE if set. A judgehost restarted or added later must be warmed again.</p></div>
+</div>
+<p class="small">Cold generation took a median of 1 s per problem, 80 s for the slowest (problem G), about 3 minutes for all 40 on one laptop.</p>
+<aside>This is the run-twice policy from the decision deck, applied to a contest. The first pass exists to fill the cache on every judgehost, so no contestant’s submission ever waits on a generator. The second pass is the real check, and it also catches any solution the end-of-file warning missed. Keep both passes on the schedule for the test contest, and repeat them for any judgehost that joins late.</aside>
+</section>
+</div>
+<div id="bar"><span id="pos"></span> · ← → to move · n for notes · <a href="../">all decks</a></div>
+<div id="notes"></div>
+<script>(function () {
+  var stage = document.getElementById('stage');
+  var slides = Array.prototype.slice.call(stage.children);
+  var bar = document.getElementById('pos'), notes = document.getElementById('notes');
+  var i = 0;
+  function fit() {
+    var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    stage.style.transform = 'scale(' + s + ') translate(-50%, -50%)';
+  }
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach(function (s, k) { s.classList.toggle('current', k === i); });
+    bar.textContent = (i + 1) + ' / ' + slides.length;
+    var a = slides[i].querySelector('aside');
+    notes.textContent = a ? a.textContent : '(no notes)';
+    if (location.hash !== '#' + (i + 1)) history.replaceState(null, '', '#' + (i + 1));
+  }
+  function fromHash() { var n = parseInt(location.hash.slice(1), 10); show(isNaN(n) ? 0 : n - 1); }
+  document.addEventListener('keydown', function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ') { show(i + 1); e.preventDefault(); }
+    else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') { show(i - 1); e.preventDefault(); }
+    else if (k === 'Home') show(0);
+    else if (k === 'End') show(slides.length - 1);
+    else if (k === 'n' || k === 'N') document.body.classList.toggle('show-notes');
+  });
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('a, #notes, #bar')) return;
+    show(e.clientX > window.innerWidth / 2 ? i + 1 : i - 1);
+  });
+  window.addEventListener('resize', fit);
+  window.addEventListener('hashchange', fromHash);
+  fit(); fromHash();
+})();</script>
+</body>
+</html>
