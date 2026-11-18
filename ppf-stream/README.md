@@ -42,6 +42,7 @@ ppf_stream/convert.py          an existing package (or its LFS pointers) to pinn
 ppf_stream/expand.py           option 1: restore pinned data at build time
 ppf_stream/default_judge.py    the spec's default output validator, as a program
 ppf_stream/input_guard.py      lets existing input validators accept directives
+ppf_stream/mkpatch.py          keep a hand edit to generated data as a patch
 ```
 
 `materialize.py` is what keeps both worlds reachable: the streaming form for
@@ -148,6 +149,20 @@ Small cases stay as they are. Then either:
 
 In both, bytes that do not match their pin are an error, never a silent change
 of test data.
+
+**Hand edits as patches (gen -> patch -> pin).** Generated data is often
+touched up by hand: a boundary case added, a line removed. Keep the edit, not
+the file: `mkpatch.py PKG secret/10_max.in EDITED` writes a unified diff to
+`generators/patches/secret/10_max.in.patch` and re-pins the case to the edited
+bytes. Regeneration applies the patch before checking the pin, in both options;
+a patch that no longer applies, because the generator changed, is an error.
+Five edits to a 2.6 MB case made a 360-byte patch.
+
+**Option 2 and end of input.** An interactive harness may keep the submission's
+input open until the validator exits (problemtools' `interactive` does, by
+design). A submission that reads until end of input (`sys.stdin.read()`,
+`while (cin >> x)`) then never finishes. Under such a harness, option 2 suits
+only problems whose input says how much to read, or contests that state it.
 
     python3 ppf_stream/convert.py PKG --mode build --regen "python3 generators/gen.py"
     python3 ppf_stream/expand.py PKG --check

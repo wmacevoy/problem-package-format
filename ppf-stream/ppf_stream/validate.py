@@ -70,6 +70,7 @@ specification's default output validator does, honouring its flags.
 import hashlib
 import os
 import pathlib
+import re
 import shutil
 import signal
 import subprocess
@@ -323,6 +324,7 @@ def _generate(cache, src, script_rel, dest):
                            env=dict(os.environ, **REGEN_ENV))
         if r.returncode != 0:
             raise RuntimeError(f"regen.sh failed ({r.returncode}): {r.stdout.decode()[-600:]}")
+        apply_patches(work)
         (work / ".complete").write_text("")
         try:
             os.replace(work, dest)     # atomic; a concurrent winner keeps its copy
@@ -332,6 +334,79 @@ def _generate(cache, src, script_rel, dest):
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     return dest
+
+
+PATCH_DIR = pathlib.Path("generators") / "patches"
+HUNK = re.compile(rb"^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@")
+
+
+def apply_patches(work):
+    """gen -> patch: apply generators/patches/<path under data>.patch to data/<path>.
+
+    A hand edit on top of generated data (a boundary case added, a line removed)
+    is kept as a small unified diff instead of as the whole file.  The pin is
+    of the patched bytes, so a patch that stops applying cleanly, because the
+    generator changed under it, is an error like any other mismatch."""
+    root = work / PATCH_DIR
+    if not root.is_dir():
+        return []
+    done = []
+    for p in sorted(root.rglob("*.patch")):
+        rel = p.relative_to(root).with_suffix("")          # secret/10_max.in
+        target = work / "data" / rel
+        if not target.is_file():
+            raise RuntimeError(f"patch {p.relative_to(work)}: generator did not write data/{rel}")
+        try:
+            target.write_bytes(apply_unified(target.read_bytes(), p.read_bytes()))
+        except ValueError as e:
+            raise RuntimeError(f"patch {p.relative_to(work)} does not apply to data/{rel}: {e}")
+        done.append(rel)
+    return done
+
+
+def apply_unified(old_bytes, patch_bytes):
+    """Apply one file's unified diff exactly: no fuzz, no offsets."""
+    old = old_bytes.splitlines(keepends=True)
+    lines = patch_bytes.splitlines(keepends=True)
+    out, i, k = [], 0, 0
+    same = lambda a, b: a.rstrip(b"\r\n") == b.rstrip(b"\r\n")
+    while k < len(lines):
+        m = HUNK.match(lines[k])
+        if not m:
+            k += 1                                  # ---/+++ headers, anything before a hunk
+            continue
+        start = int(m.group(1))
+        n_old = int(m.group(2)) if m.group(2) is not None else 1
+        n_new = int(m.group(4)) if m.group(4) is not None else 1
+        pos = start - 1 if n_old else start         # a pure insertion goes after line `start`
+        if pos < i or pos > len(old):
+            raise ValueError(f"hunk at line {start} out of order or past the end")
+        out.extend(old[i:pos])
+        i = pos
+        k += 1
+        # Consume exactly the hunk's counted lines, so a data line that happens
+        # to start with "-- " or "++ " is never mistaken for a file header.
+        while k < len(lines) and (n_old > 0 or n_new > 0 or lines[k][:1] == b"\\"):
+            line, tag = lines[k], lines[k][:1]
+            if tag == b"\\":                        # "\ No newline at end of file"
+                if out and lines[k - 1][:1] == b"+":
+                    out[-1] = out[-1].rstrip(b"\r\n")
+            elif tag in (b" ", b"-"):
+                if i >= len(old) or not same(old[i], line[1:]):
+                    raise ValueError(f"line {i + 1} does not match the patch's context")
+                if tag == b" ":
+                    out.append(old[i])
+                    n_new -= 1
+                i += 1
+                n_old -= 1
+            elif tag == b"+":
+                out.append(line[1:])
+                n_new -= 1
+            else:
+                raise ValueError(f"unexpected line in hunk: {line[:40]!r}")
+            k += 1
+    out.extend(old[i:])
+    return b"".join(out)
 
 
 def resolve(directive, cache_dir, src=None, script_rel="regen.sh"):

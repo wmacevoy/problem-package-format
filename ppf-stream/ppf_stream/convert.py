@@ -39,6 +39,24 @@ import sys
 HERE = pathlib.Path(__file__).resolve().parent
 POINTER = re.compile(rb"^version https://git-lfs.github.com/spec/v1\noid sha256:([0-9a-f]{64})\nsize (\d+)\n")
 GUARD_NAME = "input_guard.py"
+# Judges use a program directory's `run` only when it also has an executable
+# `build`; without one they guess the language and pick a main file themselves.
+NOOP_BUILD = "#!/bin/sh\n# Present so judges use ./run (nothing to compile).\nexit 0\n"
+# Judges keep checktestdata in different places (problemtools bundles its own
+# copy and does not put it on PATH), so a guarded .ctd validator looks for it.
+CTD_FINDER = """#!/bin/sh
+# Run checktestdata from $CHECKTESTDATA, PATH, or a bundled problemtools copy.
+c="${CHECKTESTDATA:-$(command -v checktestdata 2>/dev/null)}"
+if [ -z "$c" ]; then
+  for f in /opt/venvs/*/lib/python3*/site-packages/problemtools/support/checktestdata \\
+           /usr/lib/python3/dist-packages/problemtools/support/checktestdata \\
+           /usr/local/lib/python3*/*-packages/problemtools/support/checktestdata; do
+    [ -x "$f" ] && c=$f && break
+  done
+fi
+[ -n "$c" ] || { echo "checktestdata not found: set CHECKTESTDATA" >&2; exit 1; }
+exec "$c" "$@"
+"""
 
 
 def executable(path, text):
@@ -112,7 +130,8 @@ def wrap_input_validators(pkg):
             if ext == ".py":
                 cmd = f'python3 "$d/{prog.name}"'
             elif ext == ".ctd":
-                cmd = f'checktestdata "$d/{prog.name}"'
+                executable(target / "ctd.sh", CTD_FINDER)
+                cmd = f'sh "$d/ctd.sh" "$d/{prog.name}"'
             elif ext in (".cpp", ".cc"):
                 executable(target / "build", f'#!/bin/sh\nset -e\nd="$(cd "$(dirname "$0")" && pwd)"\n'
                                              f'c++ -O2 -std=gnu++17 -o "$d/orig" "$d/{prog.name}"\n')
@@ -120,6 +139,8 @@ def wrap_input_validators(pkg):
             else:
                 raise SystemExit(f"convert: cannot tell how to run input validator {prog}")
         shutil.copy(HERE / GUARD_NAME, target / GUARD_NAME)
+        if not (target / "build").exists():
+            executable(target / "build", NOOP_BUILD)
         executable(target / "run", '#!/bin/sh\nd="$(cd "$(dirname "$0")" && pwd)"\n'
                                    f'exec python3 "$d/{GUARD_NAME}" {cmd} -- "$@"\n')
         wrapped.append(target.relative_to(pkg))
@@ -169,6 +190,7 @@ def main():
         for name in ("validate.py", "default_judge.py"):
             shutil.copy(HERE / name, ov / name)
         executable(ov / "run", '#!/bin/sh\nexec python3 "$(dirname "$0")/validate.py" "$@"\n')
+        executable(ov / "build", NOOP_BUILD)
         rg = ov / "regen"
         for p in ["generators", *a.needs]:
             src = pkg / p
