@@ -206,7 +206,7 @@ body.show-notes #notes { display: block; }
 <div class="card"><p class="num">2</p><p class="label">problems use it today: problem A (17.8 → 7.3 MB) and problem B (24.9 → 4.3 MB).</p></div>
 <div class="card"><p class="num">6 s</p><p class="label">to unpack every archive, against 174 s to regenerate. Byte-for-byte reproducible.</p></div>
 </div>
-<p class="small">A shim, not a destination: it is real data in Git, re-committed on every change, and an archive over 2 MiB needs the maintainers’ exception to the problem repository’s datasize check.</p>
+<p class="small">A shim, not a destination: it is real data in Git, re-committed on every change. Archives over 2 MiB are split into parts under the problem repository’s per-file limit, but the repository still holds them whole.</p>
 <aside>Option 3 answers “what if the generator is broken, or there never was one?” The data goes into a reproducible tar.xz under generators/, and its cases become pins like generated ones, so expansion, option 2, patches and the commit hook all work unchanged. It costs about a third of the data’s size in the repository, instead of almost nothing, and every change re-commits the archive. Retire it when the generator is fixed: put the generator back in regen.sh, delete the archive, and re-pin.</aside>
 </section>
 <section id="contest">

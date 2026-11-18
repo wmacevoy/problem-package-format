@@ -165,7 +165,7 @@ body.show-notes #notes { display: block; }
 <div class="row">
 <div class="card"><h3>What it does</h3><p class="label">Adds the cases to generators/data.tar.xz and pins them. regen.sh unpacks the archive after the generator, so archived cases win.</p></div>
 <div class="card"><h3>What stays the same</h3><p class="label">Opening, editing, the hook, patches, and both ways of deploying. problem A and problem B work this way today.</p></div>
-<div class="card"><h3>The cost</h3><p class="label">Real data in Git, about a third of its size, re-committed on every change. Over 2 MiB needs a datasize exception.</p></div>
+<div class="card"><h3>The cost</h3><p class="label">Real data in Git, about a third of its size, re-committed on every change. Split into parts under 2 MiB automatically.</p></div>
 </div>
 <p class="small">When the generator is fixed: put it back in regen.sh, delete the archive, and run sync.py &lt;problem&gt; --repin.</p>
 <aside>Use option 3 for a hand-made large case, a generator that crashes, or one whose output has drifted from the data the problem was tested with. Name the cases to archive, or let archive.py take every data file of 2 MiB or more. The archive is reproducible byte for byte, so rebuilding it from the same files changes nothing in Git.</aside>
