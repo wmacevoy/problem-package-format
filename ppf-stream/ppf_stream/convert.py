@@ -55,7 +55,9 @@ if [ -z "$c" ]; then
   done
 fi
 [ -n "$c" ] || { echo "checktestdata not found: set CHECKTESTDATA" >&2; exit 1; }
-exec "$c" "$@"
+# checktestdata exits 0 (valid) or 1 (invalid); input validators exit 42 or 43.
+"$c" "$@"
+case $? in 0) exit 42 ;; 1) exit 43 ;; *) exit 1 ;; esac
 """
 
 
